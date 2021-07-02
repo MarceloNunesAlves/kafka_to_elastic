@@ -20,6 +20,7 @@ COPY ./requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY ./utils /app/utils
+COPY ./db /app/db
 COPY ./main.py /app/main.py
 
 ENTRYPOINT python main.py

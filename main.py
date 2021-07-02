@@ -1,6 +1,6 @@
 from confluent_kafka import Consumer, KafkaError, KafkaException
 from json import loads
-import data_elastic
+from db import data_elastic
 import traceback
 import logging
 import os
@@ -8,7 +8,7 @@ import sys
 import json
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.ERROR)
 
 FORMATTER = logging.Formatter("%(asctime)s — %(name)s — %(levelname)s — %(message)s")
 
@@ -17,13 +17,14 @@ console_handler.setFormatter(FORMATTER)
 logger.addHandler(console_handler)
 
 # Ambos os valores serão separado por virgula
+brokers = os.environ.get('KAFKA_BROKERS', 'localhost')
 topic = os.environ.get('KAFKA_TOPIC', 'topic-test')
 group_id = os.environ.get('KAFKA_GROUP_ID', 'group-test')
 offset_reset = os.environ.get('KAFKA_OFFSET_RESET', 'earliest')
 index = os.environ.get('INDEX_ELK', 'test-index')
-bulk_size = os.environ.get('BULK_SIZE', 10)
+bulk_size = int(os.environ.get('BULK_SIZE', "10"))
 
-conf = {'bootstrap.servers': 'localhost',
+conf = {'bootstrap.servers': brokers,
         'group.id': group_id,
         'auto.offset.reset': offset_reset,
         'max.poll.interval.ms': 600000}
